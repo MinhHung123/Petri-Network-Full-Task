@@ -1,0 +1,314 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="cs1" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <name>
+      <text>Shared Memory</text>
+    </name>
+    <declaration>
+      <text>
+        Shared_mem_multi_p by Denis Poitrenaud, and revised by Fabrice Kordon v 1.0
+      </text>
+      <structure>
+        <declarations>
+          <!-- Sorts declaration -->
+          <namedsort id="dot" name="Dot">
+            <dot/>
+          </namedsort>
+          <namedsort id="pro" name="P">
+            <finiteintrange start="1" end="10"/>
+          </namedsort>
+          <namedsort id="pp" name="PxP">
+            <productsort>
+              <usersort declaration="pro"/>
+              <usersort declaration="pro"/>
+            </productsort>
+          </namedsort>
+          <!-- Variables declaration -->
+          <variabledecl id="varx" name="x">
+            <usersort declaration="pro"/>
+          </variabledecl>
+          <variabledecl id="vary" name="y">
+            <usersort declaration="pro"/>
+          </variabledecl>
+          <variabledecl id="varm" name="m">
+            <usersort declaration="pro"/>
+          </variabledecl>
+        </declarations>
+      </structure>
+    </declaration>
+
+    <page id="page1">
+      <place id="pOwn">
+        <graphics>
+          <position x="35" y="35"/>
+        </graphics>
+        <name>
+          <text>OwnMemAcc</text>
+        </name>
+        <type>
+          <structure>
+            <usersort declaration="pro"/>
+          </structure>
+        </type>
+        <!-- không initialMarking => 0 -->
+      </place>
+
+      <place id="pActive">
+        <graphics>
+          <position x="35" y="70"/>
+        </graphics>
+        <name>
+          <text>Active</text>
+        </name>
+        <type>
+          <structure>
+            <usersort declaration="pro"/>
+          </structure>
+        </type>
+        <!-- tổng số token = 12 -->
+        <initialMarking>
+          <text>12</text>
+        </initialMarking>
+      </place>
+
+      <place id="pQue">
+        <graphics>
+          <dimension x="18" y="18"/>
+          <position x="70" y="70"/>
+        </graphics>
+        <name>
+          <text>Queue</text>
+        </name>
+        <type>
+          <structure>
+            <usersort declaration="pro"/>
+          </structure>
+        </type>
+      </place>
+
+      <place id="pExt">
+        <graphics>
+          <position x="100" y="80"/>
+        </graphics>
+        <name>
+          <text>Ext_Bus</text>
+        </name>
+        <type>
+          <structure>
+            <usersort declaration="dot"/>
+          </structure>
+        </type>
+        <!-- 1 token dot -->
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+
+      <place id="pExtMem">
+        <graphics>
+          <position x="100" y="70"/>
+        </graphics>
+        <name>
+          <text>Ext_Mem_Acc</text>
+        </name>
+        <type>
+          <structure>
+            <usersort declaration="pp"/>
+          </structure>
+        </type>
+      </place>
+
+      <place id="pMem">
+        <graphics>
+          <position x="100" y="40"/>
+        </graphics>
+        <name>
+          <text>Memory</text>
+        </name>
+        <type>
+          <structure>
+            <usersort declaration="pro"/>
+          </structure>
+        </type>
+        <!-- tổng số token = 12 -->
+        <initialMarking>
+          <text>12</text>
+        </initialMarking>
+      </place>
+
+      <transition id="tBO">
+        <graphics>
+          <position x="30" y="50"/>
+        </graphics>
+        <name>
+          <text>Begin_Own_Acc</text>
+        </name>
+      </transition>
+
+      <transition id="tEO">
+        <graphics>
+          <position x="30" y="50"/>
+        </graphics>
+        <name>
+          <text>End_Own_Acc</text>
+        </name>
+        <condition>
+          <structure>
+            <equality>
+              <subterm>
+                <variable refvariable="varm"/>
+              </subterm>
+              <subterm>
+                <variable refvariable="varx"/>
+              </subterm>
+            </equality>
+          </structure>
+        </condition>
+      </transition>
+
+      <transition id="tReq">
+        <graphics>
+          <position x="52" y="70"/>
+        </graphics>
+        <name>
+          <text>Req_Ext_Acc</text>
+        </name>
+      </transition>
+
+      <transition id="tBE">
+        <graphics>
+          <position x="85" y="70"/>
+        </graphics>
+        <name>
+          <text>Begin_Ext_Acc</text>
+          <graphics>
+            <offset x="-10" y="-3"/>
+          </graphics>
+        </name>
+        <condition>
+          <structure>
+            <inequality>
+              <subterm>
+                <variable refvariable="varm"/>
+              </subterm>
+              <subterm>
+                <variable refvariable="varx"/>
+              </subterm>
+            </inequality>
+          </structure>
+        </condition>
+      </transition>
+
+      <transition id="tEE">
+        <graphics>
+          <dimension x="20" y="6"/>
+          <position x="120" y="70"/>
+        </graphics>
+        <name>
+          <text>End_Ext_Acc</text>
+          <graphics>
+            <offset x="3" y="-2"/>
+          </graphics>
+        </name>
+      </transition>
+
+      <!-- Arcs: giữ nguyên source/target, chỉ đổi hlinscription -> inscription với weight=1 -->
+
+      <arc id="a1" source="tBO" target="pOwn">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a2" source="pOwn" target="tEO">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a3" source="tEO" target="pActive">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a4" source="pActive" target="tBO">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a5" source="tEO" target="pMem">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a6" source="pMem" target="tEO">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a7" source="pActive" target="tReq">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a8" source="tReq" target="pQue">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a9" source="pQue" target="tBE">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a10" source="tBE" target="pExt">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a11" source="pExt" target="tEE">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a12" source="tEE" target="pActive">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a13" source="tEE" target="pMem">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a14" source="pMem" target="tBE">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a15" source="tEE" target="pExt">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+      <arc id="a16" source="pExt" target="tBE">
+        <inscription>
+          <text>1</text>
+        </inscription>
+      </arc>
+
+    </page>
+  </net>
+</pnml>
