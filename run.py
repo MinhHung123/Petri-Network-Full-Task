@@ -1,9 +1,9 @@
 from src.PetriNet import PetriNet
-from src.BDD import bdd_reachable
-from src.Optimization import max_reachable_marking
+from src.BDD import build_bdd
+from src.Optimization import Optimize_max_reachable_marking
 from src.BFS import bfs_reachable
 from src.DFS import dfs_reachable
-from src.Deadlock import deadlock_reachable_marking
+from src.Deadlock import deadlock_detection
 from pyeda.inter import * 
 import numpy as np
 ## from graphviz import Source
@@ -12,10 +12,10 @@ def main():
     # ------------------------------------------------------
     # 1. Load Petri Net từ file PNML
     # ------------------------------------------------------
-    filename = "example.pnml"   # đổi file tại đây
+    filename = "Input_pnml_file.pnml"   # đổi file tại đây
     print("Loading PNML:", filename)
 
-    pn = PetriNet.from_pnml(filename)
+    pn = PetriNet.build_pnml(filename)
     print("\n--- Petri Net Loaded ---")
     print(pn)
 
@@ -41,7 +41,7 @@ def main():
     # 4. BDD reachable
     # ------------------------------------------------------
     print("\n--- BDD Reachable ---")
-    bdd, count = bdd_reachable(pn)
+    bdd, count = build_bdd(pn)
     print("Satisfying all:", list(bdd.satisfy_all()))
     print("Minimized =", espresso_exprs(bdd2expr(bdd)))
     print("BDD reachable markings =", count)
@@ -51,7 +51,7 @@ def main():
     # 5. Deadlock detection
     # ------------------------------------------------------
     print("\n--- Deadlock reachable marking ---")
-    dead = deadlock_reachable_marking(pn, bdd)
+    dead = deadlock_detection(pn, bdd)
     if dead is not None:
         print("Deadlock marking:", dead)
     else:
@@ -77,7 +77,7 @@ def main():
     #  0, -2,  2
     # ])
     print("\n--- Optimize c·M ---")
-    max_mark, max_val = max_reachable_marking(
+    max_mark, max_val = Optimize_max_reachable_marking(
         pn.place_names, bdd, c
     )
     print("c:", c)

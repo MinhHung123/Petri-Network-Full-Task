@@ -22,8 +22,9 @@ class PetriNet:
         self.M0 = M0
 
     @classmethod
-    def from_pnml(cls, filename: str) -> "PetriNet":
+    def build_pnml(cls, filename: str) -> "PetriNet":
         """Read a PNML file (PT-net) and build a PetriNet."""
+        # Đọc toàn bộ cây XML
         tree = ET.parse(filename)
         root = tree.getroot()
         import re
@@ -32,13 +33,16 @@ class PetriNet:
         ns = {"pnml": ns_uri} if ns_uri else {}
         def q(tag: str) -> str:
             return f"pnml:{tag}" if ns_uri else tag
+        # Tìm phần tử Net 
         net = root.find(q("net"), ns)
         if net is None:
             net = root.find(".//" + q("net"), ns)
         if net is None:
             raise ValueError("No <net> element found in PNML file")
+        # Lấy các place và transition trong net
         places = net.findall(".//" + q("place"), ns)
         transitions = net.findall(".//" + q("transition"), ns)
+        # Lấy id của place và transition
         place_ids = [p.attrib.get("id") for p in places]
         trans_ids = [t.attrib.get("id") for t in transitions]
         def get_label(elem: ET.Element, child_tag: str) -> Optional[str]:
@@ -52,6 +56,7 @@ class PetriNet:
         place_names = [get_label(p, "name") for p in places]
         trans_names = [get_label(t, "name") for t in transitions]
         M0 = np.zeros(len(place_ids), dtype=int)
+        # Khởi tạo Marking M0
         for i, p in enumerate(places):
             val = get_label(p, "initialMarking")
             if val:
@@ -62,10 +67,14 @@ class PetriNet:
                         M0[i] = int(float(val))
                     except ValueError:
                         M0[i] = 0
+        # Ma trận I, O: kích thước = (số transition, số place)
+        # I[t, p] = số token lấy từ place p khi bắn transition t
+        # O[t, p] = số token thêm vào place p khi bắn transition t
         I = np.zeros((len(trans_ids), len(place_ids)), dtype=int)
         O = np.zeros((len(trans_ids), len(place_ids)), dtype=int)
         place_idx = {pid: i for i, pid in enumerate(place_ids)}
         trans_idx = {tid: i for i, tid in enumerate(trans_ids)}
+        # Lấy các arc trong net
         arcs = net.findall(".//" + q("arc"), ns)
         def arc_weight(a: ET.Element) -> int:
             ins = a.find(q("inscription"), ns)
@@ -82,6 +91,7 @@ class PetriNet:
                     return int(float(txt))
                 except ValueError:
                     return 1
+        # Duyệt từng arc để điền vào I và O
         for a in arcs:
             src = a.attrib.get("source")
             tgt = a.attrib.get("target")
