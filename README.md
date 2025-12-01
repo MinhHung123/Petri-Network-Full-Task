@@ -1,4 +1,3 @@
-cat > README.md << 'EOF'
 # Petri Net Analysis & Optimization
 
 Dự án này cung cấp các công cụ để:
@@ -32,7 +31,7 @@ venv\Scripts\Activate.ps1
 # Linux / macOS:
 source venv/bin/activate
 ```
-## 3. Cài cái thư viện cần thiết
+## 3. Cài các thư viện cần thiết
 
 - Cài đặt các thư viện từ `requirements.txt`
 ```sh

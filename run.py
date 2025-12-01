@@ -6,13 +6,16 @@ from src.DFS import dfs_reachable
 from src.Deadlock import deadlock_detection
 from pyeda.inter import * 
 import numpy as np
-## from graphviz import Source
+import pm4py
+# from graphviz import Source
+from pm4py.objects.petri_net.importer import importer as pnml_importer
+from pm4py.visualization.petri_net import visualizer as pn_vis
 
 def main():
     # ------------------------------------------------------
     # 1. Load Petri Net từ file PNML
     # ------------------------------------------------------
-    filename = "Input_pnml_file.pnml"   # đổi file tại đây
+    filename = "Input.pnml"   # đổi file tại đây
     print("Loading PNML:", filename)
 
     pn = PetriNet.build_pnml(filename)
@@ -60,7 +63,7 @@ def main():
     # ------------------------------------------------------
     # 6. Optimization: maximize c·M
     # ------------------------------------------------------
-    c = np.array([1, -2, 3, -1])
+    c = np.array([1, -2, 3, -1, 1, 2])
     # c = np.array([
     #  1, -2,  3,  0,  5,
     # -1,  2, -3,  4,  1,
@@ -76,6 +79,7 @@ def main():
     # -3,  2,  1, -1,  4,
     #  0, -2,  2
     # ])
+    
     print("\n--- Optimize c·M ---")
     max_mark, max_val = Optimize_max_reachable_marking(
         pn.place_names, bdd, c
@@ -83,6 +87,31 @@ def main():
     print("c:", c)
     print("Max marking:", max_mark)
     print("Max value:", max_val)
+    # ------------------------------------------------------
+    # 7. VẼ HÌNH PETRI NET BẰNG PM4PY (TASK 3)
+    # ------------------------------------------------------
+    print("\n=== DRAWING PETRI NET WITH PM4PY – Task 3 ===")
+    try:
+        pnml_path = filename  # dùng lại file PNML ở trên
+
+        # pm4py đọc PNML
+        pn_net, im, fm = pnml_importer.apply(pnml_path)
+
+        # Tạo graph
+        gviz = pn_vis.apply(pn_net, im, fm)
+
+        # Lưu ra file ảnh
+        output_img = "petri_net.png"
+        pn_vis.save(gviz, output_img)
+        print(f"Petri net image saved to: {output_img}")
+
+        # KHÔNG auto mở nữa cho đỡ lỗi
+        # pn_vis.view(gviz)
+
+    except Exception as e:
+        print("Không thể vẽ Petri net bằng pm4py. Chi tiết lỗi:")
+        print(e)
+
 
 
 if __name__ == "__main__":
