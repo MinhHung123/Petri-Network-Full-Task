@@ -56,6 +56,7 @@ class PetriNet:
         place_names = [get_label(p, "name") for p in places]
         trans_names = [get_label(t, "name") for t in transitions]
         M0 = np.zeros(len(place_ids), dtype=int)
+        
         # Khởi tạo Marking M0
         for i, p in enumerate(places):
             val = get_label(p, "initialMarking")

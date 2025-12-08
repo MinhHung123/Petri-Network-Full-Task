@@ -15,7 +15,11 @@ def main():
     # ------------------------------------------------------
     # 1. Load Petri Net từ file PNML
     # ------------------------------------------------------
-    filename = "Input.pnml"   # đổi file tại đây
+    #filename = "Input.pnml"   # đổi file tại đây
+    
+    filename = input("Nhập tên file: ").strip()
+    # filename = "ShareMemory_v2.pnml"
+    # filename = "philo.pnml"
     print("Loading PNML:", filename)
 
     pn = PetriNet.build_pnml(filename)
@@ -116,3 +120,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
