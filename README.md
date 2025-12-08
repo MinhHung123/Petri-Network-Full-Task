@@ -21,7 +21,7 @@
 - pm4py 2.7.19.3
 - WSL (trên Windows) hoặc Linux / macOS
 ---
-# Hướng dẫn chạy code
+## Hướng dẫn chạy code
 
 - 1. Tạo môi trường ảo (virtual environment)
 ```sh
@@ -55,7 +55,7 @@ python3 run.py
 ```sh
 test_PNML\file_name
 ```
-- Các file có sẵn: 
+### Các file có sẵn: 
 - Input.pnml
 - philo.pnml
 - FileAccess.pnml
