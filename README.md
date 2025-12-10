@@ -48,23 +48,19 @@ pip install -r requirements.txt
 python3 run.py
 ```
 
-- 5. Nhâp tên file
-
-- Nhập file theo cú pháp 
+- 5. Chọn task muốn chạy theo menu task hiện trên terminal
 
 ```sh
-test_PNML\file_name
+================= MENU TASK =================
+1. Task 1
+2. Task 2 BFS
+3. Task 2 DFS
+4. Task 3
+5. Task 4
+6. Task 5
+7. Draw Petri Net
+8. Run All Task
 ```
-### Các file có sẵn: 
-- Input.pnml
-- philo.pnml
-- FileAccess.pnml
-- ShareMemory_v2.pnml
-- ShareMemory.pnml
-- SwimmingPool.pnml
-- TokenRing.pnml
-
----
 
 ## Cấu trúc dự án
 

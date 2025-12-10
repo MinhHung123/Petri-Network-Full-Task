@@ -50,18 +50,26 @@ def build_bdd(pn: PetriNet) -> Tuple[BinaryDecisionDiagram, int]:
     # Lấy số lượng places
     n_places = len(M0)
     place_names = None
-    
-    # Lấy tên các place từ thuộc tính của pn 
-    for attr in  ["P", "places", "place_names"]:
+
+    # ƯU TIÊN place_names -> rồi đến places -> cuối cùng mới tới P
+    for attr in ["place_names", "places", "P"]:
         if hasattr(pn, attr):
             place_names = list(getattr(pn, attr))
             break
+
     # Nếu không có tên place, hoặc số lượng không khớp, tự sinh tên p1, p2, ...
     if place_names is None or len(place_names) != n_places:
         place_names = [f"p{i+1}" for i in range(n_places)]
-        
+
+    # ĐẢM BẢO tất cả là string (phòng trường hợp phần tử là object)
+    place_names = [str(name) for name in place_names]
+
+    # Cập nhật luôn vào pn.place_names để chỗ khác dùng cho đồng bộ
+    pn.place_names = place_names
+
     # total_expr là biểu thức logic biểu diễn tập tất cả các marking reachable
     vars_expr = [exprvar(name) for name in place_names]
+
     total_expr = None
     
     # Với mỗi marking reachable, tạo ra một "minterm" tương ứng
