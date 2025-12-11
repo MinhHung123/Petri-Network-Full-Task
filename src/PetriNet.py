@@ -5,12 +5,19 @@ from typing import List, Optional
 class PetriNet:
     def __init__(
         self,
+        # id của các place
         place_ids: List[str],
+        # id của các transitiom
         trans_ids: List[str],
+        # tên place
         place_names: List[Optional[str]],
+        # tên transitiom
         trans_names: List[Optional[str]],
-        I: np.ndarray,   
+        # Ma trận Input của các transition
+        I: np.ndarray, 
+        # Ma trận output của các transition  
         O: np.ndarray, 
+        # Initial marking
         M0: np.ndarray
     ):
         self.place_ids = place_ids
